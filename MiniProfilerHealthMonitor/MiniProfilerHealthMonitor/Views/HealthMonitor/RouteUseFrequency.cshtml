@@ -1,0 +1,124 @@
+﻿@using MiniProfilerHealthMonitor.Models
+@model List<RouteFrequencyDto>
+
+<script type="text/javascript" src="//www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load('visualization', '1', { packages: ['corechart'] });
+</script>
+<script type="text/javascript">
+    function drawVisualization() {
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn('string', 'Route Name');
+        dataTable.addColumn('number', 'Count');
+
+        @foreach(var m in @Model)
+        {
+            <text>dataTable.addRow(['@m.Name', @m.FrequencyCount]);</text>
+        }
+
+        // Create and draw the visualization.
+        var ac = new google.visualization.BarChart(document.getElementById('visualization'));
+        ac.draw(dataTable,
+                 {
+                     title: "Frequency of Route Use",
+                     height: 600,
+                     //backgroundColor: '#959CA6',
+                     vAxis: { title: "# of Requests", minValue: 0},
+                     hAxis: { title: "Route Name" }
+                 }
+            );
+    }
+
+
+    google.setOnLoadCallback(drawVisualization);
+</script>
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+        $('#nextPage').on('click', function () {
+            window.location.href = updateQueryStringParameter(window.location.href, 'pageNumber', @ViewBag.PageNumber + 1);
+        });
+
+        $('#previousPage').on('click', function () {
+            window.location.href = updateQueryStringParameter(window.location.href, 'pageNumber', @ViewBag.PageNumber - 1);
+        });
+
+        $('.datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'mm/dd/yyyy'
+        });
+    });
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?|&])" + key + "=.*?(&|$)", "i");
+        separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+            return uri + separator + key + "=" + value;
+        }
+    }
+</script>
+
+@{
+    var pageNumber = (int)ViewBag.PageNumber;
+    var pageSize = (int)ViewBag.PageSize;
+    var totalItems = (int)ViewBag.TotalItems;
+    ViewBag.Title = "Route Use Frequency";
+    var routeUseFrequencySearchCriteria = (RouteUseFrequencySearchCriteria)ViewBag.RouteUseFrequencySearchCriteria;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.ValidationSummary()
+
+<form role="form">
+    <div class="form-group">
+        @Html.LabelFor(f => routeUseFrequencySearchCriteria.BeginDate)
+        @Html.TextBoxFor(f => routeUseFrequencySearchCriteria.BeginDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(f => routeUseFrequencySearchCriteria.EndDate)
+        @Html.TextBoxFor(f => routeUseFrequencySearchCriteria.EndDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
+    </div>
+    @Html.Hidden("hasSearchBeenPerformed", true)
+    <button type="submit" class="btn btn-default">Search</button>
+</form>
+
+<br />
+
+<div id="visualization"></div>
+
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Frequency Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in @Model)
+        {
+            <tr>
+                <td>@m.Name</td>
+                <td>@m.FrequencyCount</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<ul class="pager">
+    @if (pageNumber != 1)
+    {
+        <li><a id="previousPage" href="#">Previous</a></li>
+    }
+    @if ((pageNumber * pageSize) < totalItems)
+    {
+        <li><a id="nextPage" href="#">Next</a></li>
+    }
+</ul>
+

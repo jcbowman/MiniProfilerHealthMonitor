@@ -1,0 +1,32 @@
+﻿@using MiniProfilerHealthMonitor.Models
+@model List<ActivityQueryDto>
+
+@{
+    ViewBag.Title = "View Queries for Activity";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Duration (ms)</th>
+            <th>Command String</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in @Model)
+        {
+            <tr>
+                <td>@m.Id</td>
+                <td>@m.Duration</td>
+                <td>@m.Command</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

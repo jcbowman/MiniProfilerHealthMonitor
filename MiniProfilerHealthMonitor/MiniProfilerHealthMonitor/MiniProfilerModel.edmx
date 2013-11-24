@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MiniProfilerModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MiniProfiler.dbo.MiniProfilerClientTimings' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="MiniProfilerClientTimings">
+          <Key>
+            <PropertyRef Name="MiniProfilerId" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="MiniProfilerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Start" Type="decimal" Precision="7" Scale="1" />
+          <Property Name="Duration" Type="decimal" Precision="7" Scale="1" />
+        </EntityType>
+        <EntityType Name="MiniProfilers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Started" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="MachineName" Type="nvarchar" MaxLength="100" />
+          <Property Name="User" Type="nvarchar" MaxLength="100" />
+          <Property Name="Level" Type="tinyint" />
+          <Property Name="RootTimingId" Type="uniqueidentifier" />
+          <Property Name="DurationMilliseconds" Type="decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationMillisecondsInSql" Type="decimal" Precision="7" Scale="1" />
+          <Property Name="HasSqlTimings" Type="bit" Nullable="false" />
+          <Property Name="HasDuplicateSqlTimings" Type="bit" Nullable="false" />
+          <Property Name="HasTrivialTimings" Type="bit" Nullable="false" />
+          <Property Name="HasAllTrivialTimings" Type="bit" Nullable="false" />
+          <Property Name="TrivialDurationThresholdMilliseconds" Type="decimal" Precision="5" Scale="1" />
+          <Property Name="HasUserViewed" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MiniProfilerMetadata.dbo.MiniProfilerSqlTimingParameters' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="MiniProfilerSqlTimingParameters">
+          <Key>
+            <PropertyRef Name="MiniProfilerId" />
+            <PropertyRef Name="ParentSqlTimingId" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="MiniProfilerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ParentSqlTimingId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="130" Nullable="false" />
+          <Property Name="DbType" Type="nvarchar" MaxLength="50" />
+          <Property Name="Size" Type="int" />
+          <Property Name="Value" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="MiniProfilerSqlTimings">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MiniProfilerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ParentTimingId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ExecuteType" Type="tinyint" Nullable="false" />
+          <Property Name="StartMilliseconds" Type="decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationMilliseconds" Type="decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="FirstFetchDurationMilliseconds" Type="decimal" Precision="7" Scale="1" />
+          <Property Name="IsDuplicate" Type="bit" Nullable="false" />
+          <Property Name="StackTraceSnippet" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="CommandString" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MiniProfilerTimings">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MiniProfilerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ParentTimingId" Type="uniqueidentifier" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Depth" Type="smallint" Nullable="false" />
+          <Property Name="StartMilliseconds" Type="decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationMilliseconds" Type="decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationWithoutChildrenMilliseconds" Type="decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="SqlTimingsDurationMilliseconds" Type="decimal" Precision="7" Scale="1" />
+          <Property Name="IsRoot" Type="bit" Nullable="false" />
+          <Property Name="HasChildren" Type="bit" Nullable="false" />
+          <Property Name="IsTrivial" Type="bit" Nullable="false" />
+          <Property Name="HasSqlTimings" Type="bit" Nullable="false" />
+          <Property Name="HasDuplicateSqlTimings" Type="bit" Nullable="false" />
+          <Property Name="ExecutedReaders" Type="smallint" Nullable="false" />
+          <Property Name="ExecutedScalars" Type="smallint" Nullable="false" />
+          <Property Name="ExecutedNonQueries" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="MiniProfilerModelStoreContainer">
+          <EntitySet Name="MiniProfilers" EntityType="Self.MiniProfilers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MiniProfilerSqlTimings" EntityType="Self.MiniProfilerSqlTimings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MiniProfilerTimings" EntityType="Self.MiniProfilerTimings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MiniProfilerClientTimings" EntityType="Self.MiniProfilerClientTimings" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MiniProfilerClientTimings].[MiniProfilerId] AS [MiniProfilerId], 
+    [MiniProfilerClientTimings].[Name] AS [Name], 
+    [MiniProfilerClientTimings].[Start] AS [Start], 
+    [MiniProfilerClientTimings].[Duration] AS [Duration]
+    FROM [dbo].[MiniProfilerClientTimings] AS [MiniProfilerClientTimings]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="MiniProfilerSqlTimingParameters" EntityType="Self.MiniProfilerSqlTimingParameters" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MiniProfilerSqlTimingParameters].[MiniProfilerId] AS [MiniProfilerId], 
+    [MiniProfilerSqlTimingParameters].[ParentSqlTimingId] AS [ParentSqlTimingId], 
+    [MiniProfilerSqlTimingParameters].[Name] AS [Name], 
+    [MiniProfilerSqlTimingParameters].[DbType] AS [DbType], 
+    [MiniProfilerSqlTimingParameters].[Size] AS [Size], 
+    [MiniProfilerSqlTimingParameters].[Value] AS [Value]
+    FROM [dbo].[MiniProfilerSqlTimingParameters] AS [MiniProfilerSqlTimingParameters]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MiniProfilerModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="MiniProfiler">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Started" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="MachineName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="User" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Level" Type="Byte" />
+          <Property Name="RootTimingId" Type="Guid" />
+          <Property Name="DurationMilliseconds" Type="Decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationMillisecondsInSql" Type="Decimal" Precision="7" Scale="1" />
+          <Property Name="HasSqlTimings" Type="Boolean" Nullable="false" />
+          <Property Name="HasDuplicateSqlTimings" Type="Boolean" Nullable="false" />
+          <Property Name="HasTrivialTimings" Type="Boolean" Nullable="false" />
+          <Property Name="HasAllTrivialTimings" Type="Boolean" Nullable="false" />
+          <Property Name="TrivialDurationThresholdMilliseconds" Type="Decimal" Precision="5" Scale="1" />
+          <Property Name="HasUserViewed" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MiniProfilerSqlTiming">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="MiniProfilerId" Type="Guid" Nullable="false" />
+          <Property Name="ParentTimingId" Type="Guid" Nullable="false" />
+          <Property Name="ExecuteType" Type="Byte" Nullable="false" />
+          <Property Name="StartMilliseconds" Type="Decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationMilliseconds" Type="Decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="FirstFetchDurationMilliseconds" Type="Decimal" Precision="7" Scale="1" />
+          <Property Name="IsDuplicate" Type="Boolean" Nullable="false" />
+          <Property Name="StackTraceSnippet" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CommandString" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MiniProfilerTiming">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="MiniProfilerId" Type="Guid" Nullable="false" />
+          <Property Name="ParentTimingId" Type="Guid" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Depth" Type="Int16" Nullable="false" />
+          <Property Name="StartMilliseconds" Type="Decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationMilliseconds" Type="Decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="DurationWithoutChildrenMilliseconds" Type="Decimal" Precision="7" Scale="1" Nullable="false" />
+          <Property Name="SqlTimingsDurationMilliseconds" Type="Decimal" Precision="7" Scale="1" />
+          <Property Name="IsRoot" Type="Boolean" Nullable="false" />
+          <Property Name="HasChildren" Type="Boolean" Nullable="false" />
+          <Property Name="IsTrivial" Type="Boolean" Nullable="false" />
+          <Property Name="HasSqlTimings" Type="Boolean" Nullable="false" />
+          <Property Name="HasDuplicateSqlTimings" Type="Boolean" Nullable="false" />
+          <Property Name="ExecutedReaders" Type="Int16" Nullable="false" />
+          <Property Name="ExecutedScalars" Type="Int16" Nullable="false" />
+          <Property Name="ExecutedNonQueries" Type="Int16" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MiniProfilerClientTiming">
+          <Key>
+            <PropertyRef Name="MiniProfilerId" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="MiniProfilerId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Start" Type="Decimal" Precision="7" Scale="1" />
+          <Property Name="Duration" Type="Decimal" Precision="7" Scale="1" />
+        </EntityType>
+        <EntityType Name="MiniProfilerSqlTimingParameter">
+          <Key>
+            <PropertyRef Name="MiniProfilerId" />
+            <PropertyRef Name="ParentSqlTimingId" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="MiniProfilerId" Type="Guid" Nullable="false" />
+          <Property Name="ParentSqlTimingId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="130" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DbType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Size" Type="Int32" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="MiniProfilerEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MiniProfilers" EntityType="Self.MiniProfiler" />
+          <EntitySet Name="MiniProfilerSqlTimings" EntityType="Self.MiniProfilerSqlTiming" />
+          <EntitySet Name="MiniProfilerTimings" EntityType="Self.MiniProfilerTiming" />
+          <EntitySet Name="MiniProfilerClientTimings" EntityType="Self.MiniProfilerClientTiming" />
+          <EntitySet Name="MiniProfilerSqlTimingParameters" EntityType="Self.MiniProfilerSqlTimingParameter" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MiniProfilerModelStoreContainer" CdmEntityContainer="MiniProfilerEntities">
+          <EntitySetMapping Name="MiniProfilers">
+            <EntityTypeMapping TypeName="MiniProfilerModel.MiniProfiler">
+              <MappingFragment StoreEntitySet="MiniProfilers">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Started" ColumnName="Started" />
+                <ScalarProperty Name="MachineName" ColumnName="MachineName" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="RootTimingId" ColumnName="RootTimingId" />
+                <ScalarProperty Name="DurationMilliseconds" ColumnName="DurationMilliseconds" />
+                <ScalarProperty Name="DurationMillisecondsInSql" ColumnName="DurationMillisecondsInSql" />
+                <ScalarProperty Name="HasSqlTimings" ColumnName="HasSqlTimings" />
+                <ScalarProperty Name="HasDuplicateSqlTimings" ColumnName="HasDuplicateSqlTimings" />
+                <ScalarProperty Name="HasTrivialTimings" ColumnName="HasTrivialTimings" />
+                <ScalarProperty Name="HasAllTrivialTimings" ColumnName="HasAllTrivialTimings" />
+                <ScalarProperty Name="TrivialDurationThresholdMilliseconds" ColumnName="TrivialDurationThresholdMilliseconds" />
+                <ScalarProperty Name="HasUserViewed" ColumnName="HasUserViewed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MiniProfilerSqlTimings">
+            <EntityTypeMapping TypeName="MiniProfilerModel.MiniProfilerSqlTiming">
+              <MappingFragment StoreEntitySet="MiniProfilerSqlTimings">
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MiniProfilerId" ColumnName="MiniProfilerId" />
+                <ScalarProperty Name="ParentTimingId" ColumnName="ParentTimingId" />
+                <ScalarProperty Name="ExecuteType" ColumnName="ExecuteType" />
+                <ScalarProperty Name="StartMilliseconds" ColumnName="StartMilliseconds" />
+                <ScalarProperty Name="DurationMilliseconds" ColumnName="DurationMilliseconds" />
+                <ScalarProperty Name="FirstFetchDurationMilliseconds" ColumnName="FirstFetchDurationMilliseconds" />
+                <ScalarProperty Name="IsDuplicate" ColumnName="IsDuplicate" />
+                <ScalarProperty Name="StackTraceSnippet" ColumnName="StackTraceSnippet" />
+                <ScalarProperty Name="CommandString" ColumnName="CommandString" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MiniProfilerTimings">
+            <EntityTypeMapping TypeName="MiniProfilerModel.MiniProfilerTiming">
+              <MappingFragment StoreEntitySet="MiniProfilerTimings">
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MiniProfilerId" ColumnName="MiniProfilerId" />
+                <ScalarProperty Name="ParentTimingId" ColumnName="ParentTimingId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Depth" ColumnName="Depth" />
+                <ScalarProperty Name="StartMilliseconds" ColumnName="StartMilliseconds" />
+                <ScalarProperty Name="DurationMilliseconds" ColumnName="DurationMilliseconds" />
+                <ScalarProperty Name="DurationWithoutChildrenMilliseconds" ColumnName="DurationWithoutChildrenMilliseconds" />
+                <ScalarProperty Name="SqlTimingsDurationMilliseconds" ColumnName="SqlTimingsDurationMilliseconds" />
+                <ScalarProperty Name="IsRoot" ColumnName="IsRoot" />
+                <ScalarProperty Name="HasChildren" ColumnName="HasChildren" />
+                <ScalarProperty Name="IsTrivial" ColumnName="IsTrivial" />
+                <ScalarProperty Name="HasSqlTimings" ColumnName="HasSqlTimings" />
+                <ScalarProperty Name="HasDuplicateSqlTimings" ColumnName="HasDuplicateSqlTimings" />
+                <ScalarProperty Name="ExecutedReaders" ColumnName="ExecutedReaders" />
+                <ScalarProperty Name="ExecutedScalars" ColumnName="ExecutedScalars" />
+                <ScalarProperty Name="ExecutedNonQueries" ColumnName="ExecutedNonQueries" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MiniProfilerClientTimings">
+            <EntityTypeMapping TypeName="MiniProfilerModel.MiniProfilerClientTiming">
+              <MappingFragment StoreEntitySet="MiniProfilerClientTimings">
+                <ScalarProperty Name="MiniProfilerId" ColumnName="MiniProfilerId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MiniProfilerSqlTimingParameters">
+            <EntityTypeMapping TypeName="MiniProfilerModel.MiniProfilerSqlTimingParameter">
+              <MappingFragment StoreEntitySet="MiniProfilerSqlTimingParameters">
+                <ScalarProperty Name="MiniProfilerId" ColumnName="MiniProfilerId" />
+                <ScalarProperty Name="ParentSqlTimingId" ColumnName="ParentSqlTimingId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DbType" ColumnName="DbType" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

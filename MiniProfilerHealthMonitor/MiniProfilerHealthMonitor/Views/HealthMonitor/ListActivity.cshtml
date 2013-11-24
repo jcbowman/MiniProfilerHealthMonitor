@@ -1,0 +1,69 @@
+﻿@using MiniProfilerHealthMonitor.Models
+@model List<ActivityDto>
+
+@{
+    var pageNumber = (int)ViewBag.PageNumber;
+    var pageSize = (int)ViewBag.PageSize;
+    var totalItems = (int)ViewBag.TotalItems;
+    ViewBag.Title = "List Activity";
+}
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+        $('#nextPage').on('click', function () {
+            window.location.href = updateQueryStringParameter(window.location.href, 'pageNumber', @ViewBag.PageNumber + 1);
+        });
+
+        $('#previousPage').on('click', function () {
+            window.location.href = updateQueryStringParameter(window.location.href, 'pageNumber', @ViewBag.PageNumber - 1);
+        });
+    });
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?|&])" + key + "=.*?(&|$)", "i");
+        separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+            return uri + separator + key + "=" + value;
+        }
+    }
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Duration (ms)</th>
+            <th>Begin Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in @Model)
+        {
+            <tr>
+                <td>@Html.ActionLink("View Queries", "ActivityQueries", new { id = m.Id })</td>
+                <td>@m.Name</td>
+                <td>@m.Duration</td>
+                <td>@m.BeginTime</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<ul class="pager">
+    @if (pageNumber != 1)
+    {
+        <li><a id="previousPage" href="#">Previous</a></li>
+    }
+    @if ((pageNumber * pageSize) < totalItems)
+    {
+        <li><a id="nextPage" href="#">Next</a></li>
+    }
+</ul>
+
+

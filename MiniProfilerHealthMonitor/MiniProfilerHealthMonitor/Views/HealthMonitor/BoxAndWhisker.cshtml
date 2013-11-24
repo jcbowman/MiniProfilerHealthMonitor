@@ -1,0 +1,147 @@
+﻿@using MiniProfilerHealthMonitor.Models
+@model List<BoxAndWhiskerDto>
+
+<script type="text/javascript" src="//www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load('visualization', '1', { packages: ['corechart'] });
+</script>
+<script type="text/javascript">
+    function drawVisualization() {
+        // Create and populate the data table. Column 6: median, Column 7: mean. Values are invented!
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn('string', 'Box-Timing');
+        dataTable.addColumn('number', 'Box-Timing');
+        dataTable.addColumn('number', 'Box-Timing');
+        dataTable.addColumn('number', 'Box-Timing');
+        dataTable.addColumn('number', 'Box-Timing');
+        dataTable.addColumn({ type: 'string', role: 'tooltip' });
+        dataTable.addColumn('number', 'Median');
+        dataTable.addColumn('number', 'Mean');
+
+        @foreach(var m in @Model)
+        {
+            <text>dataTable.addRow(['@m.Name',
+                                    @m.FirstQuartileMinimum,
+                                    @m.ThirdQuartileMaximum,
+                                    @m.SecondQuartileMinimum,
+                                    @m.FourthQuartileMaximum,
+                                    'Min: ' + '@m.FirstQuartileMinimum' + '\n' + '25 Percentile: ' + '@m.SecondQuartileMinimum' + '\n' + 'Median: ' + '@m.Median' + '\n' + '75 Percentile: ' + '@m.ThirdQuartileMaximum' + '\n' + 'Max: ' + '@m.FourthQuartileMaximum' + '\n\n' + 'Mean: ' + '@m.AverageDuration',
+                                    @m.Median,
+                                    @m.AverageDuration]);</text>
+        }
+
+
+        // Create and draw the visualization.
+        var ac = new google.visualization.ComboChart(document.getElementById('visualization'));
+        ac.draw(dataTable, {
+            title: 'Box and Whisker of Applications Requests',
+            height: 600,
+            //backgroundColor: '#959CA6',
+            vAxis: { title: "Duration (m/s)", minValue: 0 },
+            hAxis: { title: "Route Name" },
+            series: { 0: { type: "candlesticks" }, 1: { type: "line", pointSize: 2, lineWidth: 0 }, 2: { type: "line", pointSize: 2, lineWidth: 0, color: 'black' } }
+        });
+    }
+
+
+    google.setOnLoadCallback(drawVisualization);
+</script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+        $('#nextPage').on('click', function () {
+            window.location.href = updateQueryStringParameter(window.location.href, 'pageNumber', @ViewBag.PageNumber + 1);
+        });
+
+        $('#previousPage').on('click', function () {
+            window.location.href = updateQueryStringParameter(window.location.href, 'pageNumber', @ViewBag.PageNumber - 1);
+        });
+
+        $('.datepicker').datepicker({
+                            autoclose: true,
+                            todayHighlight: true,
+                            format: 'mm/dd/yyyy'
+                        });
+    });
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?|&])" + key + "=.*?(&|$)", "i");
+        separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+            return uri + separator + key + "=" + value;
+        }
+    }
+</script>
+
+    @{
+        ViewBag.Title = "Box And Whisker Breakdown";
+        var pageNumber = (int)ViewBag.PageNumber;
+        var pageSize = (int)ViewBag.PageSize;
+        var totalItems = (int)ViewBag.TotalItems;
+        var boxAndWhiskerSearchCriteria = (BoxAndWhiskerSearchCriteria)ViewBag.BoxAndWhiskerSearchCriteria;
+    }
+
+    <h2>@ViewBag.Title</h2>
+
+    @Html.ValidationSummary()
+
+    <form role="form">
+        <div class="form-group">
+            @Html.LabelFor(f => boxAndWhiskerSearchCriteria.BeginDate)
+            @Html.TextBoxFor(f => boxAndWhiskerSearchCriteria.BeginDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(f => boxAndWhiskerSearchCriteria.EndDate)
+            @Html.TextBoxFor(f => boxAndWhiskerSearchCriteria.EndDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
+        </div>
+        @Html.Hidden("hasSearchBeenPerformed", true)
+        <button type="submit" class="btn btn-default">Search</button>
+    </form>
+
+    <br />
+
+    <div id="visualization"></div>
+
+    <br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Minimum Duration (ms)</th>
+                <th>25 Percentile Duration (ms)</th>
+                <th>Median (ms)</th>
+                <th>75 Percentile Duration (ms)</th>
+                <th>Maximum Duration (ms)</th>
+                <th>Average Duration (ms)</th>
+    </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in @Model)
+        {
+            <tr>
+                    <td>@m.Name</td>
+                    <td>@m.FirstQuartileMinimum</td>
+                    <td>@m.SecondQuartileMinimum</td>
+                    <td>@m.Median</td>
+                    <td>@m.ThirdQuartileMaximum</td>
+                    <td>@m.FourthQuartileMaximum</td>
+                    <td>@m.AverageDuration</td>
+                </tr>
+        }
+        </tbody>
+    </table>
+    <ul class="pager">
+    @if (pageNumber != 1)
+    {
+        <li><a id="previousPage" href="#">Previous</a></li>
+    }
+    @if ((pageNumber * pageSize) < totalItems)
+    {
+        <li><a id="nextPage" href="#">Next</a></li>
+    }
+    </ul>
+
